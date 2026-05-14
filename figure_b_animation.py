@@ -74,6 +74,7 @@ def sat_position(t_rad):
 N_FRAMES = 480
 FPS = 12
 TOTAL_HOURS = 24.0
+# A wrapped footprint can be split at both map seams; four artists cover all pieces.
 MAX_FOOTPRINT_SEGMENTS = 4
 t_frames = np.linspace(0, 4*np.pi, N_FRAMES)
 
