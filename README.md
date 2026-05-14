@@ -2,6 +2,8 @@
 
 **Single MEO satellite, 2:1 resonant orbit, global optical clock comparison via common-visibility corridors.**
 
+![Coverage Map](figure_b_coverage.png)
+
 ## Orbit Parameters
 
 | Parameter | Value |
@@ -49,6 +51,6 @@
 
 ## Files
 
-- `figure_b_coverage.py` — Python script (matplotlib + cartopy)
-- `figure_b_coverage.png` — Raster output (300 dpi)
+- `figure_b_coverage.py` — Python script (matplotlib + cartopy, Plate Carrée projection)
+- `figure_b_coverage.png` — Raster output (300 dpi, extended longitude [-210°, 210°] for contiguous Pacific corridor)
 - `figure_b_coverage.pdf` — Vector output (300 dpi)

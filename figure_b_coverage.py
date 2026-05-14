@@ -15,6 +15,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.lines import Line2D
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+from cartopy.mpl.gridliner import LongitudeFormatter, LatitudeFormatter
 
 R_EARTH = 6371.0
 ALT_SAT = 20230.0
@@ -105,7 +106,7 @@ gs = fig.add_gridspec(1, 16, width_ratios=[1]*15 + [0.85], wspace=0.03)
 ax = fig.add_subplot(gs[0, :15], projection=ccrs.PlateCarree())
 ax_cb = fig.add_subplot(gs[0, 15])
 
-MLO, MLA = (-155, 155), (-50, 72)
+MLO, MLA = (-210, 210), (-50, 72)
 ax.set_extent([*MLO, *MLA], crs=ccrs.PlateCarree())
 ax.set_facecolor('#070c14')
 
@@ -116,7 +117,8 @@ ax.add_feature(cfeature.COASTLINE, linewidth=0.35, edgecolor='#233c54', zorder=2
 ax.add_feature(cfeature.BORDERS, linewidth=0.2, edgecolor='#2a4360', zorder=2,
                linestyle='--', alpha=0.35)
 gl = ax.gridlines(draw_labels=True, linewidth=0.2, color='#162d45', alpha=0.28,
-                   linestyle='-', zorder=1)
+                   linestyle='-', zorder=1, xformatter=LongitudeFormatter(),
+                   yformatter=LatitudeFormatter())
 gl.top_labels = False; gl.right_labels = False
 gl.xlabel_style = {'color': '#3a5068', 'fontsize': 7}
 gl.ylabel_style = {'color': '#3a5068', 'fontsize': 7}
@@ -128,7 +130,6 @@ gt_lat = np.degrees(np.arcsin(np.sin(inc_r) * np.sin(t_full)))
 gt_lon_raw = np.degrees(np.arctan2(np.cos(inc_r)*np.sin(t_full), np.cos(t_full)))
 omega_e_term = (90.0 / np.pi) * t_full
 gt_lon = OMEGA_0 + gt_lon_raw - omega_e_term
-gt_lon = (gt_lon + 180) % 360 - 180
 plot_wrapped(ax, gt_lon, gt_lat, color='#2ecc71', linewidth=2.0,
              alpha=0.45, linestyle='--', transform=ccrs.PlateCarree(), zorder=4)
 
@@ -139,7 +140,6 @@ for pt, ptxt, (label, lat, lon, color, _, _) in zip(pass_times_t, pass_labels_tx
     pass_lat = np.degrees(np.arcsin(np.sin(inc_r) * np.sin(pt)))
     pass_lon_raw = np.degrees(np.arctan2(np.cos(inc_r)*np.sin(pt), np.cos(pt)))
     pass_lon = OMEGA_0 + pass_lon_raw - (90.0/np.pi)*pt
-    pass_lon = (pass_lon + 180) % 360 - 180
     ax.scatter(pass_lon, pass_lat, color=color, s=180, edgecolors='white',
                linewidth=2.2, zorder=13, marker='s', transform=ccrs.PlateCarree())
     ax.text(pass_lon + 4, pass_lat - 3.5, f"{label}\n({ptxt})",
@@ -196,7 +196,7 @@ if np.any(triple):
 corr_labels = [
     (62, 44, "Asia-Europe\nCommon Visibility", "#f1c40f"),
     (-38, 52, "Europe-Americas\nCommon Visibility", "#5dade2"),
-    (-168, 32, "Americas-Asia\n(Pacific)", "#af7ac5"),
+    (-178, 30, "Americas-Asia\n(Pacific Corridor)", "#af7ac5"),
 ]
 for lon, lat, text, color in corr_labels:
     ax.text(lon, lat, text, color=color, fontsize=7.5, fontweight='bold',
@@ -318,12 +318,12 @@ ax.set_title(
     color='white', fontsize=14, fontweight='bold', pad=14)
 
 ax.text(0.5, -0.050,
-        f'Orbit: 2:1 resonance (Earth 1 rev, SAT 2 revs ~ 24h daily repeat)  |  '
+        f'Orbit: 2:1 resonance (Earth 1 rev, SAT 2 revs = 24h daily repeat)  |  '
         f'Footprint radius ~{ALPHA_DEG:.1f} deg ({MIN_ELEV_DEG:.0f} deg min. elev @ {ALT_SAT/1000:.0f} km)  |  '
         f'Omega_0 = {OMEGA_0:.0f} deg E  |  '
         'Doppler +/-0.70-1.25 km/s  |  '
-        '3 intercontinental corridors: Asia-Europe, Europe-Americas, Americas-Asia  |  '
-        '+ Australia link  |  Common-visibility windows >30 min all station pairs',
+        '3 corridors: Asia-Europe, Europe-Americas, Americas-Asia  |  '
+        '+ Australia link  |  All common-visibility windows >30 min',
         transform=ax.transAxes, color='#3a5068', fontsize=8.2,
         ha='center', va='top', fontstyle='italic')
 
