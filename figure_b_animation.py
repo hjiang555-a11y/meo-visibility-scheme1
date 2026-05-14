@@ -112,7 +112,7 @@ gt_lat = np.degrees(np.arcsin(np.sin(inc_r) * np.sin(t_gt)))
 gt_lon_raw = np.degrees(np.arctan2(np.cos(inc_r)*np.sin(t_gt), np.cos(t_gt)))
 gt_lon = OMEGA_0 + gt_lon_raw - (90.0/np.pi)*t_gt
 
-def plot_wrapped_static(ax, lo, la, **kw):
+def split_wrapped(lo, la):
     segs_la, segs_lo = [], []
     cur_la, cur_lo = [], []
     for i in range(len(lo)):
@@ -121,6 +121,10 @@ def plot_wrapped_static(ax, lo, la, **kw):
             cur_la, cur_lo = [], []
         cur_la.append(la[i]); cur_lo.append(lo[i])
     segs_la.append(cur_la); segs_lo.append(cur_lo)
+    return segs_lo, segs_la
+
+def plot_wrapped_static(ax, lo, la, **kw):
+    segs_lo, segs_la = split_wrapped(lo, la)
     lines = []
     for sla, slo in zip(segs_la, segs_lo):
         l, = ax.plot(slo, sla, **kw)
@@ -166,8 +170,11 @@ sat_dot, = ax.plot([], [], color=SAT_COLOR, marker='s', markersize=16,
                     markeredgecolor='white', markeredgewidth=2.0, linestyle='None',
                     transform=ccrs.PlateCarree(), zorder=15)
 
-fp_line, = ax.plot([], [], color=FP_COLOR, linewidth=2.5, alpha=0.65,
-                    transform=ccrs.PlateCarree(), zorder=6)
+fp_lines = [
+    ax.plot([], [], color=FP_COLOR, linewidth=2.5, alpha=0.65,
+            transform=ccrs.PlateCarree(), zorder=6)[0]
+    for _ in range(4)
+]
 
 time_text = ax.text(0.02, 0.96, '', transform=ax.transAxes,
                      color='white', fontsize=12, fontweight='bold',
@@ -199,19 +206,14 @@ def update(frame):
 
     fp_la, fp_lo = fp_boundary(sat_lat, sat_lon, 360)
 
-    segs_la, segs_lo = [], []
-    cur_la, cur_lo = [], []
-    for i in range(len(fp_lo)):
-        if cur_lo and abs(fp_lo[i] - cur_lo[-1]) > 180:
-            segs_la.append(cur_la); segs_lo.append(cur_lo)
-            cur_la, cur_lo = [], []
-        cur_la.append(fp_la[i]); cur_lo.append(fp_lo[i])
-    segs_la.append(cur_la); segs_lo.append(cur_lo)
-
-    if len(segs_lo) > 0 and len(segs_lo[0]) > 0:
-        fp_line.set_data(segs_lo[0], segs_la[0])
-    else:
-        fp_line.set_data([], [])
+    segs_lo, segs_la = split_wrapped(fp_lo, fp_la)
+    for i, line in enumerate(fp_lines):
+        if i < len(segs_lo) and len(segs_lo[i]) > 0:
+            line.set_data(segs_lo[i], segs_la[i])
+            line.set_visible(True)
+        else:
+            line.set_data([], [])
+            line.set_visible(False)
 
     sat_dot.set_data([sat_lon], [sat_lat])
 
@@ -261,7 +263,7 @@ def update(frame):
         else:
             l.set_visible(False)
 
-    artists = [fp_line, sat_dot, time_text, vis_text]
+    artists = [*fp_lines, sat_dot, time_text, vis_text]
     for sc in city_scatters:
         artists.append(sc)
     for txt in city_labels:
