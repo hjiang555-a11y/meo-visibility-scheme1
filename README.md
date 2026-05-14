@@ -6,7 +6,9 @@
 
 ![Animation](satellite_visibility_24h.mp4)
 
-The satellite moves along its ground track over 24 hours (2 complete orbits). The visibility footprint (circular region, 61.6° radius at ≥15° elevation) moves with the satellite. Ground stations light up when they enter the footprint. Common-view links appear when two stations are simultaneously visible — enabling optical clock comparison between them.
+The satellite moves along its ground track over 24 hours (2 complete orbits). The visibility footprint (61.6° radius at ≥15° elevation) moves with the satellite. Ground stations highlight when visible. Common-view links appear when two stations are simultaneously visible.
+
+**Note**: At 15° min. elevation, direct simultaneous China-Europe and China-US common view are geometrically limited. Clock comparison is **sequential** — the satellite serves as the common optical frequency reference, comparing stations during different passes via its onboard clock. China↔Europe↔US comparison chain is feasible with Europe as the intermediary.
 
 ## Orbit Parameters
 
@@ -29,11 +31,13 @@ With the 2:1 resonance, the satellite completes exactly 2 orbits in 24 hours. Ro
 | Round 1 (0–12h) | Orbit 1 | Asia-Pacific (Pass 1, +3.4h), Europe (Pass 2, +16.1h) |
 | Round 2 (12–24h) | Orbit 2 | Americas + Europe (Pass 3, +28.1h ≡ +4.1h next day) |
 
-## 3 Intercontinental Common-Visibility Corridors
+## 3 Intercontinental Sequential Comparison Corridors
 
-- **China–Europe** (Round 1, Pass 1 ∩ Pass 2): Central Asia — 55–90 min
-- **China–US** (Round 1+2, Pass 1 ∩ Pass 3): Pacific — 55–90 min
-- **Europe–US** (Round 1+2, Pass 2 ∩ Pass 3): North Atlantic — 60–85 min
+Clock comparison via satellite onboard clock as common reference. Windows indicate total comparison chain duration.
+
+- **China–Europe** (Pass 1 ∩ Pass 2): 55–90 min
+- **China–US** (Pass 1 ∩ Pass 3): 55–90 min
+- **Europe–US** (Pass 2 ∩ Pass 3): 60–85 min
 
 ## Institution Stations
 

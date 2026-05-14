@@ -178,9 +178,9 @@ if np.any(triple):
                 transform=ccrs.PlateCarree(), zorder=9, linestyles='-.')
 
 corridor_labels = [
-    (55, 48, "China-Europe\nCommon Visibility\n55-90 min", "#f1c40f"),
-    (-155, 35, "China-US\nCommon Visibility\n(Pacific)\n55-90 min", "#e74c3c"),
-    (-35, 58, "Europe-US\nCommon Visibility\n60-85 min", "#5dade2"),
+    (55, 48, "China-Europe\nSeq. Comparison\n(Pass 1+2, 55-90 min)", "#f1c40f"),
+    (-155, 35, "China-US\nSeq. Comparison\n(Pass 1+3, 55-90 min)", "#e74c3c"),
+    (-35, 58, "Europe-US\nSeq. Comparison\n(Pass 2+3, 60-85 min)", "#5dade2"),
 ]
 for lon, lat, text, color in corridor_labels:
     ax.text(lon, lat, text, color=color, fontsize=13, fontweight='bold',
@@ -266,7 +266,9 @@ leg.get_frame().set_linewidth(0.6)
 ax.set_title(
     'Scheme 1: MEO Single-Satellite Global Optical Clock Comparison  |  '
     'i = 55-65 deg  |  h = 18,000-25,000 km  |  T = 12h  (2:1 resonance)  |  '
-    'Doppler +/-0.70-1.25 km/s (el >= 15 deg)',
+    'Footprint 61.6 deg (el >= 15 deg)  |  '
+    'Doppler +/-0.70-1.25 km/s  |  '
+    'Sequential comparison via satellite onboard clock',
     color='white', fontsize=20, fontweight='bold', pad=16)
 
 ax.text(0.5, -0.04,
