@@ -74,6 +74,7 @@ def sat_position(t_rad):
 N_FRAMES = 480
 FPS = 12
 TOTAL_HOURS = 24.0
+MAX_FOOTPRINT_SEGMENTS = 4
 t_frames = np.linspace(0, 4*np.pi, N_FRAMES)
 
 sat_lats = np.zeros(N_FRAMES)
@@ -173,7 +174,7 @@ sat_dot, = ax.plot([], [], color=SAT_COLOR, marker='s', markersize=16,
 fp_lines = [
     ax.plot([], [], color=FP_COLOR, linewidth=2.5, alpha=0.65,
             transform=ccrs.PlateCarree(), zorder=6)[0]
-    for _ in range(4)
+    for _ in range(MAX_FOOTPRINT_SEGMENTS)
 ]
 
 time_text = ax.text(0.02, 0.96, '', transform=ax.transAxes,
