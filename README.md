@@ -2,7 +2,11 @@
 
 **Single MEO satellite, 2:1 resonant orbit, global optical clock comparison via common-visibility corridors.**
 
-![Coverage Map](figure_b_coverage.png)
+## 24h Animation
+
+![Animation](satellite_visibility_24h.mp4)
+
+The satellite moves along its ground track over 24 hours (2 complete orbits). The visibility footprint (circular region, 61.6° radius at ≥15° elevation) moves with the satellite. Ground stations light up when they enter the footprint. Common-view links appear when two stations are simultaneously visible — enabling optical clock comparison between them.
 
 ## Orbit Parameters
 
@@ -16,19 +20,20 @@
 | Visibility footprint | 61.6° half-angle (15° min. elevation) |
 | Doppler range | ±0.70–1.25 km/s |
 
-## 3 Time-Sequential Passes (single ground track)
+## 2 Rounds (Orbits) per 24h
 
-| Pass | Time | Nadir Position | Covered Stations |
-|---|---|---|---|
-| Pass 1 | t₁ = +3.4h | 21.7°N, 113.6°E | Beijing, Shanghai, Hefei, Tokyo, UWA Perth |
-| Pass 2 | t₂ = +16.1h | 47.9°N, 10.0°E | PTB, Paris, NPL, USNO |
-| Pass 3 | t₃ = +27.9h | 48.5°N, 52.0°W | NIST, USNO, PTB, Paris, NPL |
+With the 2:1 resonance, the satellite completes exactly 2 orbits in 24 hours. Round 3 = Round 1 (repeats daily at same UTC).
 
-## Intercontinental Common-Visibility Corridors
+| Round | Orbit | Key Coverage |
+|---|---|---|
+| Round 1 (0–12h) | Orbit 1 | Asia-Pacific (Pass 1, +3.4h), Europe (Pass 2, +16.1h) |
+| Round 2 (12–24h) | Orbit 2 | Americas + Europe (Pass 3, +28.1h ≡ +4.1h next day) |
 
-- **Asia–Europe**: Pass 1 ∩ Pass 2
-- **Europe–Americas**: Pass 2 ∩ Pass 3 (European triangle visible from both)
-- **Americas–Asia**: Pass 1 ∩ Pass 3 (Pacific)
+## 3 Intercontinental Common-Visibility Corridors
+
+- **China–Europe** (Round 1, Pass 1 ∩ Pass 2): Central Asia — 55–90 min
+- **China–US** (Round 1+2, Pass 1 ∩ Pass 3): Pacific — 55–90 min
+- **Europe–US** (Round 1+2, Pass 2 ∩ Pass 3): North Atlantic — 60–85 min
 
 ## Institution Stations
 
@@ -51,6 +56,8 @@
 
 ## Files
 
-- `figure_b_coverage.py` — Python script (matplotlib + cartopy, Plate Carrée projection)
-- `figure_b_coverage.png` — Raster output (300 dpi, extended longitude [-210°, 210°] for contiguous Pacific corridor)
-- `figure_b_coverage.pdf` — Vector output (300 dpi)
+- `figure_b_coverage.py` — Static map script (China-centered Plate Carrée)
+- `figure_b_coverage.png` — Static raster output (300 dpi)
+- `figure_b_coverage.pdf` — Static vector output (300 dpi)
+- `figure_b_animation.py` — Animation script (480 frames, 40s @ 12fps)
+- `satellite_visibility_24h.mp4` — Animated satellite visibility over 24h (6.1 MB)
