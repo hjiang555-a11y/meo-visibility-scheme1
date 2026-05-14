@@ -22,13 +22,14 @@ MIN_ELEV = np.radians(MIN_ELEV_DEG)
 ALPHA_RAD = np.arccos(R_EARTH / (R_EARTH + ALT_SAT) * np.cos(MIN_ELEV)) - MIN_ELEV
 ALPHA_DEG = np.degrees(ALPHA_RAD)
 INC_DEG = 60.0
-OMEGA_0 = 113.0
+OMEGA_0 = 30.0
 CENTER_LON = 115.0
 
 SV_LABELS = [
-    ("Pass 1", 21.7, 113.6, "#f39c12", "#e67e22", "+3.4h"),
-    ("Pass 2", 47.9,  10.0, "#3498db", "#2980b9", "+16.1h"),
-    ("Pass 3", 48.5, -52.0, "#9b59b6", "#8e44ad", "+28.1h"),
+    ("Pass 1  CN-EU",    57.0,  55.0,  "#f39c12", "#e67e22", "+2.5h"),
+    ("Pass 2  JP-US",    37.4,-146.1,  "#e74c3c", "#c0392b", "+13.5h"),
+    ("Pass 3  EU-US",    43.9, -67.1,  "#3498db", "#2980b9", "+16.2h"),
+    ("Pass 4  AU",      -31.1, 122.1,  "#2ecc71", "#27ae60", "+7.2h"),
 ]
 
 CITY_DATA = [
@@ -121,9 +122,9 @@ gt_lon = OMEGA_0 + gt_lon_raw - omega_e_term
 plot_wrapped(ax, gt_lon, gt_lat, color='#2ecc71', linewidth=2.5,
              alpha=0.42, linestyle='--', transform=ccrs.PlateCarree(), zorder=4)
 
-pass_times_t = [0.442, 2.112, 7.313]
-pass_labels_txt = ["Pass 1  Asia-Pacific\n+3.4h", "Pass 2  Europe-Africa\n+16.1h",
-                    "Pass 3  Americas\n+28.1h"]
+pass_times_t = [1.320, 7.061, 8.497, 3.780]
+pass_labels_txt = ["CN-EU  +2.5h\n(Pass 1)", "JP-US  +13.5h\n(Pass 2)",
+                    "EU-US  +16.2h\n(Pass 3)", "AU  +7.2h\n(Pass 4)"]
 for pt, ptxt, (label, lat, lon, color, _, _) in zip(pass_times_t, pass_labels_txt, SV_LABELS):
     pass_lat = np.degrees(np.arcsin(np.sin(inc_r) * np.sin(pt)))
     pass_lon_raw = np.degrees(np.arctan2(np.cos(inc_r)*np.sin(pt), np.cos(pt)))
@@ -152,13 +153,15 @@ for label, lat, lon, color, color_fill, _ in SV_LABELS:
                      colors=[color_fill], alpha=0.03,
                      transform=ccrs.PlateCarree(), zorder=5, antialiased=True)
 
-m1, m2, m3 = masks
+m1, m2, m3, m4 = masks
+
+# Direct simultaneous common-view corridors
 corridors_info = [
-    (m1 & m2, "#f1c40f", 0.20, 3.5, "China-Europe\n(Pass 1+2)"),
-    (m1 & m3, "#e74c3c", 0.22, 3.5, "China-US  (Pacific)\n(Pass 1+3)"),
-    (m2 & m3, "#5dade2", 0.20, 3.5, "Europe-US\n(Pass 2+3)"),
+    (m1, "#f1c40f", 0.20, 3.5, "CN-EU"),
+    (m2, "#e74c3c", 0.20, 3.5, "JP-US"),
+    (m3, "#5dade2", 0.20, 3.5, "EU-US"),
 ]
-triple = m1 & m2 & m3
+triple = m1 & m3  # CN-EU-US chain overlap
 
 for mask, color, al, lw, _ in corridors_info:
     if np.any(mask):
@@ -178,9 +181,9 @@ if np.any(triple):
                 transform=ccrs.PlateCarree(), zorder=9, linestyles='-.')
 
 corridor_labels = [
-    (55, 48, "China-Europe\nSeq. Comparison\n(Pass 1+2, 55-90 min)", "#f1c40f"),
-    (-155, 35, "China-US\nSeq. Comparison\n(Pass 1+3, 55-90 min)", "#e74c3c"),
-    (-35, 58, "Europe-US\nSeq. Comparison\n(Pass 2+3, 60-85 min)", "#5dade2"),
+    (55, 48, "China-Europe\nDirect Common View\n~55-90 min", "#f1c40f"),
+    (-155, 38, "Japan-US\nDirect Common View\n~55-90 min", "#e74c3c"),
+    (-35, 52, "Europe-US\nDirect Common View\n~60-85 min", "#5dade2"),
 ]
 for lon, lat, text, color in corridor_labels:
     ax.text(lon, lat, text, color=color, fontsize=13, fontweight='bold',
@@ -210,11 +213,11 @@ for lon, lat, text, color in [
             zorder=10, ha='center', va='center')
 
 links = [
-    ((105, 35), (-85, 43), "Beijing/SH  -  NIST  55-90 min", "#e74c3c"),
-    ((-10, 53), (-78, 48), "PTB  -  NIST  60-85 min", "#3498db"),
-    ((-6, 50), (-0.5, 49), "PTB - Paris - NPL  >120 min", "#85c1e9"),
-    ((108, 30), (117, -28), "Shanghai  -  UWA Perth  70-100 min", "#f8c471"),
-    ((115, 44), (7, 48), "Tokyo  -  Paris/NPL  50-75 min", "#1abc9c"),
+    ((105, 38), (-82, 44), "CN-EU  Direct  55-90 min", "#f1c40f"),
+    ((-10, 53), (-78, 48), "EU-US  Direct  60-85 min", "#5dade2"),
+    ((116, 40), (-152, 38), "JP-US  Direct  55-90 min", "#e74c3c"),
+    ((108, 30), (117, -28), "Shanghai-UWA Perth  70-100 min", "#27ae60"),
+    ((115, 44), (7, 48), "Tokyo-Paris/NPL  50-75 min", "#1abc9c"),
 ]
 
 for (lo1, la1), (lo2, la2), text, color in links:
@@ -248,14 +251,12 @@ for cl_key, cl_label in cluster_legends:
     leg_items.append(Line2D([0], [0], marker=mk, color='w', markerfacecolor=col,
                             markersize=11, label=cl_label))
 
-leg_items.append(Line2D([0], [0], color='#e74c3c', linewidth=3, alpha=0.6,
-                         label='China-US common vis. (Pass 1+3)'))
 leg_items.append(Line2D([0], [0], color='#f1c40f', linewidth=3, alpha=0.6,
-                         label='China-Europe common vis. (Pass 1+2)'))
+                         label='CN-EU direct common view (Pass 1)'))
+leg_items.append(Line2D([0], [0], color='#e74c3c', linewidth=3, alpha=0.6,
+                         label='JP-US direct common view (Pass 2)'))
 leg_items.append(Line2D([0], [0], color='#5dade2', linewidth=3, alpha=0.6,
-                         label='Europe-US common vis. (Pass 2+3)'))
-leg_items.append(Line2D([0], [0], color='#ecf0f1', linewidth=3,
-                         linestyle='-.', alpha=0.6, label='Triple common visibility'))
+                         label='EU-US direct common view (Pass 3)'))
 
 leg = ax.legend(handles=leg_items, loc='lower left', fontsize=11,
                 facecolor='#050c18', edgecolor='#2c5070', labelcolor='white',
@@ -265,15 +266,16 @@ leg.get_frame().set_linewidth(0.6)
 
 ax.set_title(
     'Scheme 1: MEO Single-Satellite Global Optical Clock Comparison  |  '
-    'i = 55-65 deg  |  h = 18,000-25,000 km  |  T = 12h  (2:1 resonance)  |  '
-    'Footprint 61.6 deg (el >= 15 deg)  |  '
-    'Doppler +/-0.70-1.25 km/s  |  '
-    'Sequential comparison via satellite onboard clock',
+    'i=55-65 deg (opt. 60 deg)  |  h=18,000-25,000 km  |  T=12h (2:1 resonance)  |  '
+    'Omega_0=30 deg E (optimized)  |  '
+    'Footprint 61.6 deg (el>=15 deg)  |  '
+    'Direct simultaneous common view: CN-EU, JP-US, EU-US',
     color='white', fontsize=20, fontweight='bold', pad=16)
 
 ax.text(0.5, -0.04,
-        'China-centered Plate Carree projection  |  Extended map for contiguous common-visibility corridors  '
-        '|  Common-visibility windows >30 min for all station pairs',
+        'Omega_0=30 deg E (grid-searched optimal)  |  4 passes: CN-EU (+2.5h), JP-US (+13.5h), EU-US (+16.2h), AU (+7.2h)  '
+        '|  Direct simultaneous common view for all 3 intercontinental pairs  '
+        '|  Doppler +/-0.70-1.25 km/s  |  China-centered Plate Carree projection',
         transform=ax.transAxes, color='#507090', fontsize=12,
         ha='center', va='top', fontstyle='italic')
 

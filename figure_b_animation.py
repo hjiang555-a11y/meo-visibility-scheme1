@@ -22,7 +22,7 @@ MIN_ELEV = np.radians(MIN_ELEV_DEG)
 ALPHA_RAD = np.arccos(R_EARTH / (R_EARTH + ALT_SAT) * np.cos(MIN_ELEV)) - MIN_ELEV
 ALPHA_DEG = np.degrees(ALPHA_RAD)
 INC_DEG = 60.0
-OMEGA_0 = 113.0
+OMEGA_0 = 30.0
 CENTER_LON = 115.0
 PERIOD_H = 12.0
 
@@ -196,8 +196,9 @@ for _ in range(5):
 
 title = ax.set_title(
     'Scheme 1: MEO Single-Satellite Visibility Animation  |  '
-    'i=55-65°  |  h=18,000-25,000 km  |  T=12h (2:1 resonance)  |  '
-    f'Footprint {ALPHA_DEG:.0f}° (el≥{MIN_ELEV_DEG:.0f}°)',
+    'i=60 deg  |  h=18,000-25,000 km  |  T=12h  |  Omega_0=30 deg E (optimized)  |  '
+    f'Footprint {ALPHA_DEG:.0f} deg (el>={MIN_ELEV_DEG:.0f} deg)  |  '
+    'Direct CN-EU, JP-US, EU-US common view',
     color='white', fontsize=14, fontweight='bold', pad=10)
 
 def update(frame):
